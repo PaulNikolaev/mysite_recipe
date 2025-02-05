@@ -1,3 +1,5 @@
+import os
+
 from django.db import models
 from django.core.validators import FileExtensionValidator
 from django.contrib.auth.models import User
@@ -86,3 +88,60 @@ class Category(models.Model):
         Возвращение заголовка категории
         """
         return self.title
+
+
+class Ingredient(models.Model):
+    """
+    Ингредиент для рецепта
+    """
+    title = models.CharField(verbose_name='Название ингредиента', max_length=100)
+    amount = models.PositiveIntegerField(verbose_name="Количество", default=1)
+    quantity = models.CharField(max_length=50, verbose_name="Единица измерения", default="грамм")
+    recipe = models.ForeignKey(
+        'Recipe',
+        verbose_name='Рецепт',
+        on_delete=models.CASCADE,
+        related_name='ingredients'
+    )
+
+    class Meta:
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиенты'
+
+    def __str__(self):
+        return f"{self.title} — {self.amount} {self.quantity}"
+
+
+def cooking_step_upload_to(instance, filename):
+    base, ext = os.path.splitext(filename)
+    return f'images/steps/{instance.recipe.slug}/{base}{ext}'
+
+
+class Step(models.Model):
+    """
+    Этап приготовления с картинкой
+    """
+    recipe = models.ForeignKey(
+        'Recipe',
+        verbose_name='Рецепт',
+        on_delete=models.CASCADE,
+        related_name='steps'
+    )
+    description = models.TextField(verbose_name='Описание этапа')
+    image = models.ImageField(
+        default='images/steps/default.jpg',
+        verbose_name='Изображение этапа',
+        upload_to=cooking_step_upload_to,
+        blank=True,
+        null=True,
+        validators=[FileExtensionValidator(allowed_extensions=('png', 'jpg', 'webp', 'jpeg', 'gif'))]
+    )
+    step_number = models.PositiveIntegerField(verbose_name='Номер этапа')
+
+    class Meta:
+        verbose_name = 'Этап приготовления'
+        verbose_name_plural = 'Этапы приготовления'
+        ordering = ['step_number']
+
+    def __str__(self):
+        return f"Шаг {self.step_number}: {self.description[:30]}..."
