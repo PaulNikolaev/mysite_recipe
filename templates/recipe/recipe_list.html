@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-	    {% for recipe in recipes %}
-        <img src={{ recipe.thumbnail.url }} alt={{ recipe.title }} width="150"/>
-        <strong>{{ recipe.title }}</strong>
+    {% for recipe in recipes %}
+        <img src={{ recipe.thumbnail.url }} alt={{ recipe.title }} width="250"/>
+        <strong><a href="{% url 'recipe_detail' slug=recipe.slug %}">{{ recipe.title }}</a></strong>
         <p>{{ recipe.description }}</p>
         <small>{{ recipe.create }}</small>
         <hr>
