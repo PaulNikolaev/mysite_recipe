@@ -2,12 +2,23 @@
 
 {% block content %}
     {% for recipe in recipes %}
-        <img src={{ recipe.thumbnail.url }} alt={{ recipe.title }} width="250"/>
-        <strong><a href="{% url 'recipe_detail' slug=recipe.slug %}">{{ recipe.title }}</a></strong>
-        <p>{{ recipe.description }}</p>
-        <small>{{ recipe.create }}</small>
-        <hr>
-        <span>{{ recipe.category.title }}</span>
-        <br>
+        <div class="card mb-3">
+            <div class="row">
+                <div class="col-4">
+                    <img src="{{ recipe.thumbnail.url }}" class="card-img-top" alt="{{ recipe.title }}">
+                </div>
+                <div class="col-8">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="{% url 'recipe_detail' slug=recipe.slug %}">{{ recipe.title }}</a>
+                        </h5>
+                        <p class="card-text">{{ recipe.description }}</p>
+                        <small>Добавил {{ recipe.author.username }}, {{ recipe.create }}
+                            в категорию: <a
+                                    href="{% url 'recipe_by_category' recipe.category.slug %}">{{ recipe.category.title }}</a></small>
+                    </div>
+                </div>
+            </div>
+        </div>
     {% endfor %}
 {% endblock %}
