@@ -5,7 +5,13 @@
         <div class="card mb-3">
             <div class="row">
                 <div class="col-4">
-                    <img src="{{ recipe.thumbnail.url }}" class="card-img-top" alt="{{ recipe.title }}">
+                    {% if recipe.thumbnail %}
+                        <img src="{{ recipe.thumbnail.url }}" class="card-img-top" alt="{{ recipe.title }}">
+                    {% else %}
+                        <div class="d-flex align-items-center justify-content-center h-100">
+                            <p>Нет изображения</p>
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="col-8">
                     <div class="card-body">

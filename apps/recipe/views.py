@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from .models import Recipe, Category
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.shortcuts import get_object_or_404
 
+from .forms import RecipeCreateForm, RecipeUpdateForm
 
 class RecipeListView(ListView):
     model = Recipe
@@ -50,3 +51,46 @@ class RecipeFromCategory(ListView):
         context['title'] = f"Категория: {self.category.title}"
         context['categories'] = Category.objects.all()
         return context
+
+
+class RecipeCreateView(CreateView):
+    """
+    Представление: создание рецептов на сайте
+    """
+    model = Recipe
+    template_name = 'recipe/recipe_create.html'
+    form_class = RecipeCreateForm
+    login_url = 'home'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Добавление статьи на сайт'
+        context['categories'] = Category.objects.all()
+        return context
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+
+class RecipeUpdateView(UpdateView):
+    """
+    Представление: обновления рецепта на сайте
+    """
+    model = Recipe
+    template_name = 'recipe/recipe_update.html'
+    context_object_name = 'recipe'
+    form_class = RecipeUpdateForm
+    login_url = 'home'
+    success_message = 'Рецепт был успешно обновлен!'
+
+    def get_context_data(self, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f'Обновление рецепта: {self.object.title}'
+        context['categories'] = Category.objects.all()
+        return context
+
+    def form_valid(self, form):
+        form.instance.updater = self.request.user
+        form.save()
+        return super().form_valid(form)

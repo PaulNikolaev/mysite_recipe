@@ -1,8 +1,8 @@
 import os
-
 from django.db import models
 from django.core.validators import FileExtensionValidator
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 from apps.services.utils import unique_slugify
 
@@ -78,7 +78,6 @@ class Recipe(models.Model):
     objects = models.Manager()
     custom = RecipeManager()
 
-
     class Meta:
         ordering = ['-fixed', '-create']
         indexes = [models.Index(fields=['-fixed', '-create', 'status'])]
@@ -87,6 +86,12 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        """
+        Получаем прямую ссылку на рецепт
+        """
+        return reverse('recipe_detail', kwargs={'slug': self.slug})
 
     def save(self, *args, **kwargs):
         """
