@@ -4,7 +4,19 @@ from django.db import models
 from django.core.validators import FileExtensionValidator
 from django.contrib.auth.models import User
 
-from services.utils import unique_slugify
+from apps.services.utils import unique_slugify
+
+
+class RecipeManager(models.Manager):
+    """
+    Кастомный менеджер для модели рецептов
+    """
+
+    def get_queryset(self):
+        """
+        Список рецептов (SQL запрос с фильтрацией по статусу опубликованно)
+        """
+        return super().get_queryset().select_related('author', 'category').filter(status='published')
 
 
 class Recipe(models.Model):
@@ -62,6 +74,10 @@ class Recipe(models.Model):
         blank=True,
         related_name='recipes'
     )
+
+    objects = models.Manager()
+    custom = RecipeManager()
+
 
     class Meta:
         ordering = ['-fixed', '-create']
