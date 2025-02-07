@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div>
+
+        <div class="d-flex justify-content-center mb-3">
+            <img src="{{ recipe.thumbnail.url }}" alt="{{ recipe.title }}" class="img-fluid"
+                 style="max-width: 250px;">
+        </div>
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="me-3">
+                <h1 class="mb-0">{{ recipe.title }}</h1>
+            </div>
+            {% if recipe.author == user or user.is_staff %}
+                <div class="d-flex gap-2">
+                    <a href="{% url 'recipe_update' slug=recipe.slug %}"
+                       class="btn btn-primary btn-sm">Редактировать</a>
+                    <form action="{% url 'recipe_delete' slug=recipe.slug %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Вы уверены, что хотите удалить этот рецепт?');">Удалить
+                        </button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+
+        <hr>
+        <span><strong>Категория:</strong>
+            {% if recipe.category %}
+                {{ recipe.category.title }}
+            {% else %}
+                Без категории
+            {% endif %}
+        </span>
+        <p>{{ recipe.description }}</p>
+        <small><strong>Дата добавления:</strong> {{ recipe.create|date:"d.m.Y H:i" }}</small>
+        <hr>
+
+        <h3>Характеристики</h3>
+        <ul>
+            <li><strong>Время приготовления:</strong> {{ recipe.cooking_time }} минут</li>
+            <li><strong>Количество порций:</strong> {{ recipe.servings }}</li>
+        </ul>
+        <hr>
+
+        <h3>Ингредиенты</h3>
+
+        <ul>
+            {% for ingredient in recipe.ingredients.all %}
+                <li class="d-flex justify-content-between align-items-center">
+                    <span>{{ ingredient.title }} — {{ ingredient.amount }} {{ ingredient.quantity }}</span>
+                    {% if recipe.author == user or user.is_staff %}
+                        <div class="d-flex mt-2">
+                            <a href="{% url 'edit_ingredient' slug=recipe.slug pk=ingredient.pk %}"
+                               class="btn btn-warning btn-sm me-2">Изменить</a>
+                            <a href="{% url 'delete_ingredient' slug=recipe.slug pk=ingredient.pk %}"
+                               class="btn btn-danger btn-sm">Удалить</a>
+                        </div>
+                    {% endif %}
+
+                </li>
+            {% empty %}
+                <li>Ингредиенты не указаны.</li>
+            {% endfor %}
+        </ul>
+        {% if recipe.author == user or user.is_staff %}
+            <a href="{% url 'add_ingredient' recipe.slug %}" class="btn btn-primary btn-sm">Добавить ингредиент</a>
+        {% endif %}
+
+        <hr>
+        <h3>Этапы приготовления</h3>
+
+        {% for step in recipe.steps.all %}
+            <div class="card mb-1">
+                <div class="row">
+                    <div class="col-4">
+                        {% if step.image %}
+                            <img src="{{ step.image.url }}" class="card-img-top" alt="Шаг {{ step.step_number }}"
+                                 style="width: 200px; height: auto; object-fit: cover;">
+                        {% else %}
+                            <div class="d-flex align-items-center justify-content-center h-100">
+                                <p>Нет изображения</p>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-8">
+                        <h5 class="card-title">
+                            {{ step.step_number }} этап
+                        </h5>
+                        <p class="card-text">{{ step.description }}</p>
+                    </div>
+                </div>
+            </div>
+            {% if recipe.author == user or user.is_staff %}
+                <div class="d-flex justify-content-end mb-2">
+                    <a href="{% url 'edit_step' slug=recipe.slug pk=step.pk %}"
+                       class="btn btn-warning btn-sm me-2">Изменить</a>
+                    <a href="{% url 'delete_step' slug=recipe.slug pk=step.pk %}"
+                       class="btn btn-danger btn-sm">Удалить</a>
+                </div>
+            {% endif %}
+
+        {% empty %}
+            <p>Этапы приготовления не добавлены.</p>
+        {% endfor %}
+
+        {% if recipe.author == user or user.is_staff %}
+            <a href="{% url 'add_step' recipe.slug %}" class="btn btn-primary btn-sm">Добавить этап</a>
+        {% endif %}
+
+    </div>
+{% endblock %}

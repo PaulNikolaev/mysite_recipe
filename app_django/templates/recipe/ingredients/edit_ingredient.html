@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Изменить ингредиент: {{ object.title }}</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary btn-sm">Сохранить</button>
+
+    <a href="{% url 'recipe_detail' slug=slug %}" class="btn btn-secondary btn-sm">Отмена</a>
+</form>
+{% endblock %}
