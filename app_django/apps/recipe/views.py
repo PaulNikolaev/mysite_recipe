@@ -1,3 +1,4 @@
+import logging
 from django.contrib import messages
 from django.contrib.postgres.search import TrigramSimilarity
 from django.urls import reverse_lazy
@@ -10,6 +11,7 @@ from .models import Recipe, Category, Ingredient, Step
 from .forms import RecipeCreateForm, RecipeUpdateForm, IngredientForm, StepForm, SearchForm
 from ..services.mixins import AuthorRequiredMixin
 
+logger = logging.getLogger(__name__)
 
 class RecipeListView(ListView):
     model = Recipe
@@ -19,6 +21,8 @@ class RecipeListView(ListView):
     queryset = Recipe.custom.all()
 
     def get_context_data(self, **kwargs):
+
+        logger.info(f'Загрузка списка рецептов')
         context = super().get_context_data(**kwargs)
         context['title'] = 'Главная страница'
         context['categories'] = Category.objects.all()
@@ -31,6 +35,8 @@ class RecipeDetailView(DetailView):
     context_object_name = 'recipe'
 
     def get_context_data(self, **kwargs):
+        recipe = self.get_object()
+        logger.info(f"Просмотр рецепта: {recipe.title} ({recipe.id})")
         context = super().get_context_data(**kwargs)
         context['title'] = self.object.title
         context['categories'] = Category.objects.all()
@@ -76,7 +82,9 @@ class RecipeCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        logger.info(f"Рецепт создан: {form.instance.title} ({form.instance.id}) пользователем {self.request.user}")
+        return response
 
 
 class RecipeUpdateView(AuthorRequiredMixin, SuccessMessageMixin, UpdateView):
@@ -98,8 +106,9 @@ class RecipeUpdateView(AuthorRequiredMixin, SuccessMessageMixin, UpdateView):
 
     def form_valid(self, form):
         form.instance.updater = self.request.user
-        form.save()
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        logger.info(f"Рецепт обновлён: {form.instance.title} ({form.instance.id}) пользователем {self.request.user}")
+        return response
 
 
 class RecipeDeleteView(AuthorRequiredMixin, SuccessMessageMixin, DeleteView):
@@ -113,6 +122,8 @@ class RecipeDeleteView(AuthorRequiredMixin, SuccessMessageMixin, DeleteView):
         return queryset.filter(author=self.request.user)
 
     def delete(self, request, *args, **kwargs):
+        recipe = self.get_object()
+        logger.warning(f"Рецепт удалён: {recipe.title} ({recipe.id}) пользователем {request.user}")
         response = super().delete(request, *args, **kwargs)
         messages.success(self.request, self.success_message)
         return response
@@ -296,6 +307,7 @@ def tr_handler404(request, exception):
     """
     Обработка ошибки 404
     """
+    logger.error(f"Ошибка 404: {request.path}")
     return render(request=request, template_name='errors/error_page.html', status=404, context={
         'title': 'Страница не найдена: 404',
         'error_message': 'К сожалению такая страница была не найдена, или перемещена',
@@ -306,6 +318,7 @@ def tr_handler500(request):
     """
     Обработка ошибки 500
     """
+    logger.critical("Ошибка 500: внутренняя ошибка сервера")
     return render(request=request, template_name='errors/error_page.html', status=500, context={
         'title': 'Ошибка сервера: 500',
         'error_message': 'Внутренняя ошибка сайта, вернитесь на главную страницу, отчёт об ошибке мы направим администрации сайта',
@@ -316,6 +329,7 @@ def tr_handler403(request, exception):
     """
     Обработка ошибки 403
     """
+    logger.warning(f"Ошибка 403: доступ запрещён для {request.user} к {request.path}")
     return render(request=request, template_name='errors/error_page.html', status=403, context={
         'title': 'Ошибка доступа: 403',
         'error_message': 'Доступ к этой странице ограничен',

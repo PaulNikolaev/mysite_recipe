@@ -1,3 +1,4 @@
+from django.core.files.storage import default_storage
 from django.db import models
 from django.core.validators import FileExtensionValidator
 from django.contrib.auth.models import User
@@ -99,6 +100,14 @@ class Recipe(models.Model):
         self.slug = unique_slugify(self, self.title, self.slug)
         super().save(*args, **kwargs)
 
+    def delete(self, *args, **kwargs):
+        """Удаляем изображение рецепта при удалении объекта, если оно не дефолтное"""
+        if self.thumbnail and self.thumbnail.name != 'images/thumbnails/default.jpg':
+            if default_storage.exists(self.thumbnail.name):
+                default_storage.delete(self.thumbnail.name)
+
+        super().delete(*args, **kwargs)
+
 
 class Category(models.Model):
     """
@@ -193,3 +202,11 @@ class Step(models.Model):
 
     def __str__(self):
         return f"Шаг {self.step_number}: {self.description[:30]}..."
+
+    def delete(self, *args, **kwargs):
+        """Удаляем изображение шага при удалении объекта, если оно не дефолтное"""
+        if self.image and self.image.name != 'images/steps/default.jpg':
+            if default_storage.exists(self.image.name):
+                default_storage.delete(self.image.name)
+
+        super().delete(*args, **kwargs)

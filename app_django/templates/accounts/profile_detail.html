@@ -6,7 +6,11 @@
             <div class="row">
                 <div class="col-md-3">
                     <figure>
-                        <img src="{{ profile.avatar.url }}" class="img-fluid rounded-0" alt="{{ profile }}">
+                        {% if profile.avatar %}
+                            <img src="{{ profile.avatar.url }}" class="img-fluid rounded-0" alt="{{ profile }}">
+                        {% else %}
+                            <p>Аватар отсутствует</p>
+                        {% endif %}
                     </figure>
                 </div>
                 <div class="col-md-9">
@@ -18,7 +22,7 @@
                             <li>Никнейм: {{ profile.user.username }}</li>
                             {% if profile.user.get_full_name %}
                                 <li>Имя и фамилия: {{ profile.user.get_full_name }}</li> {% endif %}
-                            <li>Заходил: {{ profile.user.last_login }} | 
+                            <li>Заходил: {{ profile.user.last_login }} |
                                 {% if profile.is_online %}🟢 Онлайн{% else %}🔴 Не в сети{% endif %}</li>
                             <li>Дата рождения: {{ profile.birth_date }}</li>
                             <li>О себе: {{ profile.bio }}</li>

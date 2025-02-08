@@ -4,8 +4,12 @@
     <div>
 
         <div class="d-flex justify-content-center mb-3">
-            <img src="{{ recipe.thumbnail.url }}" alt="{{ recipe.title }}" class="img-fluid"
-                 style="max-width: 250px;">
+            {% if recipe.thumbnail %}
+                <img src="{{ recipe.thumbnail.url }}" alt="{{ recipe.title }}" class="img-fluid"
+                     style="max-width: 250px;">
+            {% else %}
+                <p>Изображение отсутствует</p>
+            {% endif %}
         </div>
         <div class="d-flex align-items-center justify-content-between">
             <div class="me-3">

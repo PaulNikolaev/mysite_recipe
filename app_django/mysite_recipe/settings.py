@@ -102,7 +102,6 @@ DATABASES = {
     }
 }
 
-
 CACHE_LOCATION = os.getenv('CACHE_LOCATION', os.path.join(BASE_DIR, 'cache', 'django_cache'))
 
 CACHES = {
@@ -165,3 +164,39 @@ EMAIL_PORT = os.getenv('EMAIL_PORT')
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SERVER_EMAIL = EMAIL_HOST_USER
+
+LOGFILE_NAME = os.getenv('LOGFILE_NAME', 'django.txt')
+LOGFILE_PATH = os.getenv('LOGFILE_PATH', os.path.join(BASE_DIR, 'logs', LOGFILE_NAME))
+LOGFILE_SIZE = int(os.getenv('LOGFILE_SIZE', 10485760))
+LOGFILE_COUNT = int(os.getenv('LOGFILE_COUNT', 5))
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[%(levelname)s] %(asctime)s %(module)s %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'logfile': {
+            'class': 'concurrent_log_handler.ConcurrentRotatingFileHandler',
+            'filename': LOGFILE_NAME,
+            'maxBytes': LOGFILE_SIZE,
+            'backupCount': LOGFILE_COUNT,
+            'encoding': 'utf-8',
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': [
+            'console',
+            'logfile',
+        ],
+        'level': 'INFO',
+    },
+}

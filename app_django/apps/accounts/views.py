@@ -1,14 +1,24 @@
+import logging
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DetailView, UpdateView, CreateView
 from django.db import transaction
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
-from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordResetView, \
-    PasswordResetConfirmView
+from django.contrib.auth.views import (LoginView,
+                                       LogoutView,
+                                       PasswordChangeView,
+                                       PasswordResetView,
+                                       PasswordResetConfirmView)
 
 from .models import Profile
-from .forms import UserUpdateForm, ProfileUpdateForm, UserRegisterForm, UserLoginForm, CustomPasswordResetForm
+from .forms import (UserUpdateForm,
+                    ProfileUpdateForm,
+                    UserRegisterForm,
+                    UserLoginForm,
+                    CustomPasswordResetForm)
 from ..recipe.models import Category
+
+logger = logging.getLogger(__name__)
 
 
 class ProfileDetailView(DetailView):
@@ -23,6 +33,7 @@ class ProfileDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['title'] = f'Профиль пользователя: {self.object.user.username}'
         context['categories'] = Category.objects.all()
+        logger.info(f'Просмотр профиля пользователя: {self.object.user.username}')
         return context
 
 
@@ -55,7 +66,9 @@ class ProfileUpdateView(UpdateView):
             if all([form.is_valid(), user_form.is_valid()]):
                 user_form.save()
                 form.save()
+                logger.info(f'Профиль пользователя {self.request.user.username} успешно обновлен')
             else:
+                logger.warning(f'Ошибка при обновлении профиля {self.request.user.username}')
                 context.update({'user_form': user_form})
                 return self.render_to_response(context)
         return super().form_valid(form)
@@ -79,6 +92,11 @@ class UserRegisterView(SuccessMessageMixin, CreateView):
         context['categories'] = Category.objects.all()
         return context
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        logger.info(f'Новый пользователь зарегистрирован: {self.object.username}')
+        return response
+
 
 class UserLoginView(SuccessMessageMixin, LoginView):
     """
@@ -94,6 +112,11 @@ class UserLoginView(SuccessMessageMixin, LoginView):
         context['title'] = 'Авторизация на сайте'
         context['categories'] = Category.objects.all()
         return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        logger.info(f'Пользователь вошел в систему: {self.request.user.username}')
+        return response
 
 
 class UserLogoutView(LogoutView):
@@ -115,6 +138,10 @@ class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
         context['categories'] = Category.objects.all()
         return context
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        logger.info(f'Пользователь {self.request.user.username} изменил пароль')
+        return response
 
     def get_success_url(self):
         return reverse_lazy('profile_detail', kwargs={'slug': self.request.user.profile.slug})
@@ -140,6 +167,11 @@ class CustomPasswordResetView(SuccessMessageMixin, PasswordResetView):
         context['categories'] = Category.objects.all()
         return context
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        logger.info(f'Запрос на сброс пароля для email: {form.cleaned_data["email"]}')
+        return response
+
 
 class CustomPasswordResetConfirmView(SuccessMessageMixin, PasswordResetConfirmView):
     """
@@ -154,3 +186,8 @@ class CustomPasswordResetConfirmView(SuccessMessageMixin, PasswordResetConfirmVi
         context['title'] = 'Установка нового пароля'
         context['categories'] = Category.objects.all()
         return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        logger.info(f'Пользователь успешно сбросил пароль')
+        return response

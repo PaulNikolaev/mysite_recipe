@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
 from django.urls import reverse
 from django.utils import timezone
+from django.core.files.storage import default_storage
 
 from apps.services.utils import unique_slugify
 
@@ -55,3 +56,11 @@ class Profile(models.Model):
         if last_seen and timezone.now() - last_seen < timezone.timedelta(seconds=300):
             return True
         return False
+
+    def delete(self, *args, **kwargs):
+        # Проверяем, что аватар не является дефолтным
+        if self.avatar and self.avatar.name != 'images/avatars/default.png':
+            if default_storage.exists(self.avatar.name):
+                default_storage.delete(self.avatar.name)
+
+        super().delete(*args, **kwargs)
