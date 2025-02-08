@@ -19,7 +19,7 @@
                         <h5 class="card-title">
                             <a href="{{ recipe.get_absolute_url }}">{{ recipe.title }}</a>
                         </h5>
-                        <p class="card-text">{{ recipe.description }}</p>
+                        <p class="card-text">{{ recipe.description|truncatewords:50 }}</p>
                         <small>Добавил {{ recipe.author.username }}, {{ recipe.create }}
                             в категорию: <a
                                     href="{{ recipe.category.get_absolute_url }}">{{ recipe.category.title }}</a></small>

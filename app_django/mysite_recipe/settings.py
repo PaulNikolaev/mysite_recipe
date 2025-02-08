@@ -102,6 +102,7 @@ DATABASES = {
     }
 }
 
+
 CACHE_LOCATION = os.getenv('CACHE_LOCATION', os.path.join(BASE_DIR, 'cache', 'django_cache'))
 
 CACHES = {

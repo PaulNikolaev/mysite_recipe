@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.utils import timezone
 from django.utils.deprecation import MiddlewareMixin
