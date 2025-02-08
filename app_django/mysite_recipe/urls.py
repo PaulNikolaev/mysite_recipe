@@ -22,6 +22,10 @@ from django.contrib.sitemaps.views import sitemap
 from apps.recipe.sitemaps import RecipeSitemap
 
 
+handler403 = 'apps.recipe.views.tr_handler403'
+handler404 = 'apps.recipe.views.tr_handler404'
+handler500 = 'apps.recipe.views.tr_handler500'
+
 sitemaps = {
     'recipes': RecipeSitemap,
 }

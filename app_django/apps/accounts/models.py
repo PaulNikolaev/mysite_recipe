@@ -1,7 +1,11 @@
+from django.core.cache import cache
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
 from django.urls import reverse
+from django.utils import timezone
+
 from apps.services.utils import unique_slugify
 
 class Profile(models.Model):
@@ -42,3 +46,12 @@ class Profile(models.Model):
         Ссылка на профиль
         """
         return reverse('profile_detail', kwargs={'slug': self.slug})
+
+    @property
+    def is_online(self):
+        cache_key = f'last-seen-{self.user.id}'
+        last_seen = cache.get(cache_key)
+
+        if last_seen and timezone.now() - last_seen < timezone.timedelta(seconds=300):
+            return True
+        return False

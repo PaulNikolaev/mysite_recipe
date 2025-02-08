@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.postgres.search import TrigramSimilarity
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 
@@ -269,7 +269,6 @@ class MyRecipesView(ListView):
         return context
 
 
-
 class RecipeSearchView(ListView):
     model = Recipe
     template_name = "recipe/recipe_search.html"
@@ -290,3 +289,34 @@ class RecipeSearchView(ListView):
         context["categories"] = Category.objects.all()
         context["search_form"] = SearchForm(self.request.GET)
         return context
+
+
+
+def tr_handler404(request, exception):
+    """
+    Обработка ошибки 404
+    """
+    return render(request=request, template_name='errors/error_page.html', status=404, context={
+        'title': 'Страница не найдена: 404',
+        'error_message': 'К сожалению такая страница была не найдена, или перемещена',
+    })
+
+
+def tr_handler500(request):
+    """
+    Обработка ошибки 500
+    """
+    return render(request=request, template_name='errors/error_page.html', status=500, context={
+        'title': 'Ошибка сервера: 500',
+        'error_message': 'Внутренняя ошибка сайта, вернитесь на главную страницу, отчёт об ошибке мы направим администрации сайта',
+    })
+
+
+def tr_handler403(request, exception):
+    """
+    Обработка ошибки 403
+    """
+    return render(request=request, template_name='errors/error_page.html', status=403, context={
+        'title': 'Ошибка доступа: 403',
+        'error_message': 'Доступ к этой странице ограничен',
+    })
