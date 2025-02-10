@@ -3,6 +3,7 @@
         <!-- Логотип -->
         <a class="navbar-brand text-secondary" href="/">Мой сайт рецептов</a>
 
+        <a class="nav-link text-secondary" href="http://localhost:8001/docs">API FastAPI</a>
         <!-- Форма поиска -->
         <form class="d-flex align-items-center" action="{% url 'recipe_search' %}" method="get">
             <input class="form-control me-2" type="search" name="query" placeholder="Поиск рецептов..."
@@ -19,7 +20,8 @@
                 </a>
                 <ul class="dropdown-menu text-small">
                     <li><a class="dropdown-item" href="{% url 'recipe_create' %}">Добавить рецепт</a></li>
-                    <li><a class="dropdown-item" href="{% url 'profile_detail' request.user.profile.slug %}">Мой профиль</a></li>
+                    <li><a class="dropdown-item" href="{% url 'profile_detail' request.user.profile.slug %}">Мой
+                        профиль</a></li>
                     <li><a class="dropdown-item" href="{% url 'my_recipes' %}">Мои рецепты</a></li>
                     <li>
                         <hr class="dropdown-divider">

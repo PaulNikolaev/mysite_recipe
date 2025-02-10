@@ -1,11 +1,14 @@
+from django.contrib.auth import get_user_model
 from django.core.files.storage import default_storage
 from django.db import models
 from django.core.validators import FileExtensionValidator
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.urls import reverse
 import os
-from apps.services.utils import unique_slugify
+from ..services.utils import unique_slugify
 
+
+User = get_user_model()
 
 class RecipeManager(models.Manager):
     """
@@ -115,7 +118,11 @@ class Category(models.Model):
     """
     title = models.CharField(max_length=255, verbose_name='Название категории')
     slug = models.SlugField(max_length=255, verbose_name='URL категории', blank=True)
-    description = models.TextField(verbose_name='Описание категории', max_length=300)
+    description = models.TextField(verbose_name='Описание категории',
+                                   max_length=300,
+                                   blank=True,
+                                   null=True,
+                                   default='Нет описания')
 
     class Meta:
         verbose_name = 'Категория'
