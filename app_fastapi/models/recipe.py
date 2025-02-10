@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, Foreign
 from sqlalchemy.orm import relationship
 from datetime import datetime
 
-from app_fastapi.db.db import Base
+from db.db import Base
 
 
 class Recipe(Base):

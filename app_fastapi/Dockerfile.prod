@@ -1,0 +1,62 @@
+###########
+# BUILDER #
+###########
+
+FROM python:3.12.0-alpine as builder
+
+WORKDIR /usr/src/app
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Устанавливаем зависимости для PostgreSQL и другие необходимые пакеты
+RUN apk update \
+    && apk add --no-cache postgresql-dev gcc python3-dev musl-dev icu icu-dev icu-data-full
+
+# Обновляем pip
+RUN pip install --upgrade pip
+
+# Копируем requirements.txt и создаем колеса для зависимостей
+COPY ./requirements.txt .
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
+
+#########
+# FINAL #
+#########
+
+FROM python:3.12.0-alpine
+
+ENV HOME=/home/app
+ENV APP_HOME=/home/app/web
+
+# Создаем директорию для проекта и пользователя app
+RUN mkdir -p $APP_HOME \
+    && addgroup -S app \
+    && adduser -S app -G app \
+    && apk update \
+    && apk add --no-cache libpq
+
+# Копируем колеса из builder и устанавливаем зависимости
+COPY --from=builder /usr/src/app/wheels /wheels
+RUN pip install --no-cache /wheels/*
+
+# Устанавливаем рабочую директорию
+WORKDIR $APP_HOME
+
+# Копируем проект FastAPI в рабочую директорию
+COPY . .
+
+# Меняем владельца всех файлов на пользователя app
+RUN chown -R app:app .
+
+# Меняем пользователя на app для безопасности
+USER app
+
+# Открываем порт для FastAPI
+EXPOSE 8001
+
+RUN chmod +x entrypoint.prod.sh
+ENTRYPOINT ["./entrypoint.prod.sh"]
+
+# Используем gunicorn для запуска FastAPI в production
+CMD ["gunicorn", "main:app", "--bind", "0.0.0.0:8001", "--workers", "4"]

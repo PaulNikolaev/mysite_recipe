@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from typing import Annotated
-from app_fastapi.db.db_depends import get_db
-from app_fastapi.models.recipe import Recipe
-from app_fastapi.models.ingredient import Ingredient
+from db.db_depends import get_db
+from models.recipe import Recipe
+from models.ingredient import Ingredient
 
 router = APIRouter(prefix="/ingredient", tags=["ingredient"])
 

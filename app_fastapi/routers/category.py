@@ -5,9 +5,9 @@ from typing import Annotated
 # from sqlalchemy import insert
 # from slugify import slugify
 
-from app_fastapi.db.db_depends import get_db
-# from app_fastapi.schemas import CategoryCreate
-from app_fastapi.models.category import Category
+from db.db_depends import get_db
+# from schemas import CategoryCreate
+from models.category import Category
 
 router = APIRouter(prefix="/categories", tags=["categories"])
 

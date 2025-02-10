@@ -1,4 +1,4 @@
-from app_fastapi.db.db import SessionLocal
+from db.db import SessionLocal
 
 def get_db():
     db = SessionLocal()

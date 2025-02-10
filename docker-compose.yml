@@ -1,0 +1,53 @@
+version: '3.9'
+
+services:
+  django:
+    build: ./app_django
+    command:
+      - python
+      - manage.py
+      - runserver
+      - 0.0.0.0:8000
+    restart: always
+    env_file: .env
+    depends_on:
+      - postgres
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app_django:/app
+
+  fastapi:
+    build: ./app_fastapi
+    command:
+      - uvicorn
+      - main:app
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8001"
+    restart: always
+    env_file: .env
+    depends_on:
+      - postgres
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./app_fastapi:/app
+
+
+  postgres:
+    image: postgres:17
+    restart: always
+    env_file: .env
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
