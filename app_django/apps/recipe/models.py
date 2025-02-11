@@ -197,7 +197,6 @@ class Step(models.Model):
         verbose_name='Изображение этапа',
         upload_to=cooking_step_upload_to,
         blank=True,
-        null=True,
         validators=[FileExtensionValidator(allowed_extensions=('png', 'jpg', 'webp', 'jpeg', 'gif'))]
     )
     step_number = models.PositiveIntegerField(verbose_name='Номер этапа')
