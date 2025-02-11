@@ -31,7 +31,7 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() in ('true', '1', 'yes')
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(',')
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(',')
 
 INTERNAL_IPS = os.getenv("INTERNAL_IPS", "127.0.0.1").split(" ")
 

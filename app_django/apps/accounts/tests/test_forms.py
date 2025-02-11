@@ -1,6 +1,10 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from apps.accounts.forms import UserUpdateForm, ProfileUpdateForm, UserRegisterForm, UserLoginForm, CustomPasswordResetForm
+from apps.accounts.forms import (UserUpdateForm,
+                                 ProfileUpdateForm,
+                                 UserRegisterForm,
+                                 UserLoginForm,
+                                 CustomPasswordResetForm)
 from apps.accounts.models import Profile
 from datetime import date
 
