@@ -32,6 +32,7 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 DEBUG = os.getenv('DEBUG', 'False').lower() in ('true', '1', 'yes')
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(',')
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost').split(',')
 
 INTERNAL_IPS = os.getenv("INTERNAL_IPS", "127.0.0.1").split(" ")
 

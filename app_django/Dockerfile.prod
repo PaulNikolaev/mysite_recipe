@@ -48,7 +48,14 @@ WORKDIR $APP_HOME
 COPY . .
 
 # Меняем владельца всех файлов на пользователя app
-RUN chown -R app:app .
+RUN chown -R app:app . && chmod -R 777 /app
+
+# Создаем директории для статики и медиа
+RUN mkdir -p /app/static /app/media /app/django_cache
+
+# Изменяем владельца и права для статики и медиа
+RUN chown -R app:app /app/static /app/media /app/django_cache \
+    && chmod -R 777 /app/static /app/media /app/django_cache
 
 # Меняем пользователя на app для безопасности
 USER app
