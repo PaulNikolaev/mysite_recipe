@@ -53,7 +53,13 @@
         <ul>
             {% for ingredient in recipe.ingredients.all %}
                 <li class="d-flex justify-content-between align-items-center">
-                    <span>{{ ingredient.title }} — {{ ingredient.amount }} {{ ingredient.quantity }}</span>
+                    <span>
+                        {{ ingredient.title }} —
+                        {% if ingredient.amount is not None %}
+                            {{ ingredient.amount }}
+                        {% endif %}
+                        {{ ingredient.quantity }}
+                    </span>
                     {% if recipe.author == user or user.is_staff %}
                         <div class="d-flex mt-2">
                             <a href="{% url 'edit_ingredient' slug=recipe.slug pk=ingredient.pk %}"

@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 import os
 from ..services.utils import unique_slugify
-
+from django.core.validators import MinValueValidator
 
 User = get_user_model()
 
@@ -153,7 +153,12 @@ class Ingredient(models.Model):
     Ингредиент для рецепта
     """
     title = models.CharField(verbose_name='Название ингредиента', max_length=100)
-    amount = models.PositiveIntegerField(verbose_name="Количество", default=1)
+    amount = models.FloatField(
+        verbose_name="Количество",
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(0.01)]
+    )
     quantity = models.CharField(max_length=50, verbose_name="Единица измерения", default="грамм")
     recipe = models.ForeignKey(
         'Recipe',
@@ -197,6 +202,7 @@ class Step(models.Model):
         verbose_name='Изображение этапа',
         upload_to=cooking_step_upload_to,
         blank=True,
+        null=True,
         validators=[FileExtensionValidator(allowed_extensions=('png', 'jpg', 'webp', 'jpeg', 'gif'))]
     )
     step_number = models.PositiveIntegerField(verbose_name='Номер этапа')
