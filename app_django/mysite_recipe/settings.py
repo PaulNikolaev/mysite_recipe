@@ -38,6 +38,8 @@ CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if os.ge
 # Разрешенные внутренние IP (для Debug Toolbar)
 INTERNAL_IPS = os.getenv("INTERNAL_IPS", "127.0.0.1").split(",")
 
+SITE_ID = 1
+
 # Подключенные приложения
 INSTALLED_APPS = [
     'django.contrib.admin',
