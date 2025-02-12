@@ -6,32 +6,9 @@
             <div class="card-title nth-card-title">
                 <h4>Регистрация на сайте</h4>
             </div>
-            <form method="post" action="{% url 'register' %}" enctype="multipart/form-data" class="lh-lg">
+            <form method="post" action="{% url 'register' %}" enctype="multipart/form-data">
                 {% csrf_token %}
-                <div class="form-group mb-3">
-                    <label for="id_username">Придумайте свой логин:</label>
-                    {{ form.username }}
-                </div>
-                <div class="form-group mb-3">
-                    <label for="id_email">Введите свой email:</label>
-                    {{ form.email }}
-                </div>
-                <div class="form-group mb-3">
-                    <label for="id_first_name">Ваше имя:</label>
-                    {{ form.first_name }}
-                </div>
-                <div class="form-group mb-3">
-                    <label for="id_last_name">Ваша фамилия:</label>
-                    {{ form.last_name }}
-                </div>
-                <div class="form-group mb-3">
-                    <label for="id_password1">Придумайте свой пароль:</label>
-                    {{ form.password1 }}
-                </div>
-                <div class="form-group mb-3">
-                    <label for="id_password2">Повторите придуманный пароль:</label>
-                    {{ form.password2 }}
-                </div>
+                {{ form.as_p }}
                 <button type="submit" class="btn btn-primary btn-sm">Зарегистрироваться</button>
                 <a href="{% url 'home' %}" class="btn btn-secondary btn-sm">Отмена</a>
             </form>

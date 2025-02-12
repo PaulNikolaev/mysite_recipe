@@ -101,6 +101,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'mysite_recipe.wsgi.application'
 
+LANGUAGE_CODE = 'ru'
+TIME_ZONE = 'Europe/Moscow'
+
 # Конфигурация кеширования
 CACHE_LOCATION = os.getenv("CACHE_LOCATION", "/tmp/django_cache")
 CACHES = {
