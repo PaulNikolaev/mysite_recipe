@@ -1,4 +1,4 @@
- # Проект ["Cайта рецептов на Django" (https://mysiterecipe.ru)](https://mysiterecipe.ru) 
+ # Проект "Cайта рецептов на Django" 
 
  ## Описание
 
@@ -96,7 +96,7 @@
 
 ---
 
-# Приложение на [FastAPI для работы с базой данных Django (https://mysiterecipe.ru/api/docs)](https://mysiterecipe.ru/api/docs)
+# Приложение на FastAPI для работы с базой данных Django
 
 Приложение на FastAPI, которое работает с базой данных, созданной в Django, имеет следующие возможности:
 
